@@ -1,5 +1,3 @@
-module your-module-name
+module github.com/jollyzachary/weather-app
 
-go 1.21.4
-
-require github.com/rs/cors v1.10.1
+go 1.24.0

@@ -1,62 +1,53 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"context"
+	"log/slog"
 	"net/http"
-
-	"github.com/rs/cors"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
-func handleGeoData(w http.ResponseWriter, r *http.Request) {
-	data, err := GetGeoData()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	fmt.Fprint(w, data)
-}
-
-func handleWeatherData(w http.ResponseWriter, r *http.Request) {
-	lat := r.URL.Query().Get("lat")
-	lon := r.URL.Query().Get("lon")
-
-	data, err := GetWeatherData(lat, lon)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	fmt.Fprint(w, data)
-}
-
-func handleForecast(w http.ResponseWriter, r *http.Request) {
-	lat := r.URL.Query().Get("lat")
-	lon := r.URL.Query().Get("lon")
-
-	data, err := GetForecastData(lat, lon)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	fmt.Fprint(w, data)
-}
-
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/geo", handleGeoData)
-	mux.HandleFunc("/weather", handleWeatherData)
-	mux.HandleFunc("/forecast", handleForecast)
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	application := newApplication(logger)
 
-	// Setup CORS
-	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
-		AllowedHeaders:   []string{"*"},
-		AllowCredentials: true,
-		Debug:            true,
-	})
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
-	handler := c.Handler(mux)
+	server := &http.Server{
+		Addr:              ":" + port,
+		Handler:           application.routes(),
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      15 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
 
-	log.Fatal(http.ListenAndServe(":8080", handler))
+	shutdownContext, stop := signal.NotifyContext(
+		context.Background(),
+		syscall.SIGINT,
+		syscall.SIGTERM,
+	)
+	defer stop()
+
+	go func() {
+		logger.Info("snow weather service listening", "address", server.Addr)
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.Error("weather service stopped unexpectedly", "error", err)
+			os.Exit(1)
+		}
+	}()
+
+	<-shutdownContext.Done()
+
+	shutdownTimeout, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := server.Shutdown(shutdownTimeout); err != nil {
+		logger.Error("graceful shutdown failed", "error", err)
+	}
 }
