@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/jollyzachary/snow-weather/actions/workflows/ci.yml/badge.svg)](https://github.com/jollyzachary/snow-weather/actions/workflows/ci.yml)
 
+![Snow atmospheric weather instrument](docs/assets/snow-hero.png)
+
 Snow is an atmospheric weather instrument built with SvelteKit, TypeScript,
 and Go. It presents current conditions, hourly changes, a seven-day outlook,
 air quality, visibility, and daylight information in one responsive interface.
@@ -22,7 +24,9 @@ preferences.
 - Imperial and metric units stored locally on the device.
 - Responsive layouts for desktop and mobile screens.
 - Condition-aware atmospheric animation with reduced-motion support.
-- No client-side API credentials or application-level personal-data storage.
+- No accounts, client-side API credentials, or durable server-side database.
+  Selected locations and units remain in browser storage; forecast and search
+  responses are cached briefly in server memory.
 
 ## Design approach
 
@@ -68,7 +72,7 @@ Go embeds those files and serves the interface and API from one binary.
 
 Requirements:
 
-- Node.js 22 or newer
+- Node.js 22.12 or newer
 - Go 1.24 or newer
 
 Install the frontend dependencies:
@@ -100,6 +104,11 @@ go build -o snow ./backend
 ```
 
 Set `PORT` to change the default `8080` listener.
+
+Public deployments should place the Go service behind HTTPS termination and
+deployment-level request limiting. The application server includes bounded
+caches, request validation, response-size limits, and upstream timeouts, but it
+is not intended to replace an internet-facing proxy or platform ingress.
 
 ## API
 
