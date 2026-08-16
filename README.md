@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/jollyzachary/snow-weather/actions/workflows/ci.yml/badge.svg)](https://github.com/jollyzachary/snow-weather/actions/workflows/ci.yml)
 
+![Snow atmospheric weather instrument](docs/assets/snow-hero.png)
+
 Snow is an atmospheric weather instrument built with SvelteKit, TypeScript,
 and Go. It presents current conditions, hourly changes, a seven-day outlook,
 air quality, visibility, and daylight information in one responsive interface.
