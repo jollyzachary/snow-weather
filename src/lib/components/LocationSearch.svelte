@@ -5,7 +5,7 @@
 
   let {
     location,
-    onselect
+    onselect,
   }: {
     location: LocationResult;
     onselect: (location: LocationResult) => void;
@@ -117,7 +117,7 @@
   {#if open}
     <div class="results" id="location-results" role="listbox">
       {#if results.length}
-        {#each results as result, index}
+        {#each results as result, index (result.id)}
           <button
             aria-selected={index === activeIndex}
             class:active={index === activeIndex}
@@ -160,7 +160,9 @@
     background: rgb(255 255 255 / 13%);
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 15%);
     backdrop-filter: blur(18px) saturate(110%);
-    transition: border-color 180ms ease, background 180ms ease;
+    transition:
+      border-color 180ms ease,
+      background 180ms ease;
   }
 
   .search-field:focus-within,
@@ -179,7 +181,9 @@
     letter-spacing: 0.02em;
   }
 
-  input::placeholder { color: rgb(246 244 238 / 74%); }
+  input::placeholder {
+    color: rgb(246 244 238 / 74%);
+  }
 
   .clear {
     display: grid;
@@ -191,7 +195,9 @@
     cursor: pointer;
   }
 
-  :global(.spinner) { animation: spin 0.8s linear infinite; }
+  :global(.spinner) {
+    animation: spin 0.8s linear infinite;
+  }
 
   .results {
     position: absolute;
@@ -222,12 +228,31 @@
   }
 
   .results button:hover,
-  .results button.active { background: rgb(255 255 255 / 10%); }
+  .results button.active {
+    background: rgb(255 255 255 / 10%);
+  }
 
-  .results span { display: grid; gap: 3px; }
-  .results strong { font-size: 0.8rem; font-weight: 650; }
-  .results small { color: var(--muted); font-size: 0.68rem; }
-  .results p { margin: 14px; color: var(--muted); font-size: 0.75rem; }
+  .results span {
+    display: grid;
+    gap: 3px;
+  }
+  .results strong {
+    font-size: 0.8rem;
+    font-weight: 650;
+  }
+  .results small {
+    color: var(--muted);
+    font-size: 0.68rem;
+  }
+  .results p {
+    margin: 14px;
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
 
-  @keyframes spin { to { rotate: 360deg; } }
+  @keyframes spin {
+    to {
+      rotate: 360deg;
+    }
+  }
 </style>

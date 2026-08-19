@@ -13,7 +13,7 @@
   <div class="sun-or-moon"></div>
 
   <div class="stars">
-    {#each stars as _, index}
+    {#each stars as _, index (index)}
       <i style={`--i: ${index}`}></i>
     {/each}
   </div>
@@ -23,13 +23,13 @@
   <div class="cloud cloud-three"></div>
 
   <div class="rain-field">
-    {#each rainDrops as _, index}
+    {#each rainDrops as _, index (index)}
       <i style={`--i: ${index}`}></i>
     {/each}
   </div>
 
   <div class="snow-field">
-    {#each snowFlakes as _, index}
+    {#each snowFlakes as _, index (index)}
       <i style={`--i: ${index}`}></i>
     {/each}
   </div>
@@ -194,9 +194,16 @@
     animation: rainfall 1.1s linear infinite;
   }
 
-  .rain-field i:nth-child(3n) { animation-duration: 0.84s; }
-  .rain-field i:nth-child(4n) { animation-delay: -0.62s; opacity: 0.45; }
-  .rain-field i:nth-child(5n) { animation-duration: 1.35s; }
+  .rain-field i:nth-child(3n) {
+    animation-duration: 0.84s;
+  }
+  .rain-field i:nth-child(4n) {
+    animation-delay: -0.62s;
+    opacity: 0.45;
+  }
+  .rain-field i:nth-child(5n) {
+    animation-duration: 1.35s;
+  }
 
   .snow-field i {
     position: absolute;
@@ -210,9 +217,17 @@
     animation: snowfall 8s linear infinite;
   }
 
-  .snow-field i:nth-child(odd) { animation-duration: 11s; opacity: 0.52; }
-  .snow-field i:nth-child(3n) { animation-delay: -5s; transform: scale(1.6); }
-  .snow-field i:nth-child(4n) { animation-delay: -8s; }
+  .snow-field i:nth-child(odd) {
+    animation-duration: 11s;
+    opacity: 0.52;
+  }
+  .snow-field i:nth-child(3n) {
+    animation-delay: -5s;
+    transform: scale(1.6);
+  }
+  .snow-field i:nth-child(4n) {
+    animation-delay: -8s;
+  }
   .stars i {
     position: absolute;
     left: calc((var(--i) + 1) * 4%);
@@ -225,9 +240,18 @@
     animation: twinkle 4s ease-in-out infinite alternate;
   }
 
-  .stars i:nth-child(3n) { top: 22%; animation-delay: -2s; }
-  .stars i:nth-child(4n) { top: 37%; opacity: 0.45; }
-  .stars i:nth-child(5n) { top: 51%; animation-delay: -1s; }
+  .stars i:nth-child(3n) {
+    top: 22%;
+    animation-delay: -2s;
+  }
+  .stars i:nth-child(4n) {
+    top: 37%;
+    opacity: 0.45;
+  }
+  .stars i:nth-child(5n) {
+    top: 51%;
+    animation-delay: -1s;
+  }
 
   .storm-flash {
     position: absolute;
@@ -245,38 +269,77 @@
     inset: 0;
     opacity: 0.12;
     background-image:
-      repeating-radial-gradient(circle at 20% 30%, transparent 0 1px, rgb(255 255 255 / 12%) 1.5px 2px),
+      repeating-radial-gradient(
+        circle at 20% 30%,
+        transparent 0 1px,
+        rgb(255 255 255 / 12%) 1.5px 2px
+      ),
       repeating-radial-gradient(circle at 80% 70%, transparent 0 1px, rgb(0 0 0 / 10%) 1.5px 2px);
-    background-size: 7px 9px, 11px 13px;
+    background-size:
+      7px 9px,
+      11px 13px;
     mix-blend-mode: soft-light;
   }
 
   @keyframes cloud-drift {
-    from { translate: -10vw 0; }
-    to { translate: 85vw 0; }
+    from {
+      translate: -10vw 0;
+    }
+    to {
+      translate: 85vw 0;
+    }
   }
 
   @keyframes rainfall {
-    from { translate: -8vw -20vh; }
-    to { translate: 8vw 130vh; }
+    from {
+      translate: -8vw -20vh;
+    }
+    to {
+      translate: 8vw 130vh;
+    }
   }
 
   @keyframes snowfall {
-    from { translate: -2vw -8vh; rotate: 0deg; }
-    50% { translate: 3vw 52vh; }
-    to { translate: -1vw 112vh; rotate: 240deg; }
+    from {
+      translate: -2vw -8vh;
+      rotate: 0deg;
+    }
+    50% {
+      translate: 3vw 52vh;
+    }
+    to {
+      translate: -1vw 112vh;
+      rotate: 240deg;
+    }
   }
 
   @keyframes twinkle {
-    from { opacity: 0.25; scale: 0.75; }
-    to { opacity: 0.85; scale: 1.35; }
+    from {
+      opacity: 0.25;
+      scale: 0.75;
+    }
+    to {
+      opacity: 0.85;
+      scale: 1.35;
+    }
   }
 
   @keyframes lightning {
-    0%, 88%, 92%, 100% { opacity: 0; }
-    89% { opacity: 0.32; }
-    90% { opacity: 0.04; }
-    91% { opacity: 0.22; }
+    0%,
+    88%,
+    92%,
+    100% {
+      opacity: 0;
+    }
+    89% {
+      opacity: 0.32;
+    }
+    90% {
+      opacity: 0.04;
+    }
+    91% {
+      opacity: 0.22;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

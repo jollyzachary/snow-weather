@@ -14,7 +14,7 @@ async function readJson<T>(response: Response): Promise<T> {
 
 export async function searchLocations(
   query: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<LocationResult[]> {
   const params = new URLSearchParams({ q: query });
   const response = await fetch(`/api/locations?${params}`, { signal });
@@ -25,12 +25,12 @@ export async function searchLocations(
 export async function fetchWeather(
   location: Pick<LocationResult, 'latitude' | 'longitude'>,
   units: Units,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<WeatherBundle> {
   const params = new URLSearchParams({
     lat: String(location.latitude),
     lon: String(location.longitude),
-    units
+    units,
   });
   const response = await fetch(`/api/weather?${params}`, { signal });
   return readJson<WeatherBundle>(response);

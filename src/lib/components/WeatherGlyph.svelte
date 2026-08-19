@@ -5,7 +5,7 @@
   let {
     code,
     size = 24,
-    strokeWidth = 1.5
+    strokeWidth = 1.5,
   }: { code: number; size?: number; strokeWidth?: number } = $props();
 
   let descriptor = $derived(describeWeather(code));

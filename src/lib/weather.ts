@@ -48,7 +48,7 @@ export function formatHour(value: string): string {
 
 export function formatDay(value: string): string {
   return new Intl.DateTimeFormat('en-US', {
-    weekday: 'short'
+    weekday: 'short',
   }).format(new Date(`${value}T12:00:00`));
 }
 

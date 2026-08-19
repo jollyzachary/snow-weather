@@ -10,9 +10,9 @@ const config = {
       assets: 'backend/static/dist',
       fallback: 'index.html',
       precompress: true,
-      strict: true
-    })
-  }
+      strict: true,
+    }),
+  },
 };
 
 export default config;

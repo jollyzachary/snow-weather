@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { resolve } from '$app/paths';
   import {
     Activity,
     Compass,
@@ -9,7 +10,7 @@
     RefreshCw,
     Sunrise,
     Sunset,
-    Wind
+    Wind,
   } from '@lucide/svelte';
   import LocationSearch from '$lib/components/LocationSearch.svelte';
   import WeatherGlyph from '$lib/components/WeatherGlyph.svelte';
@@ -22,7 +23,7 @@
     describeWeather,
     formatDay,
     formatHour,
-    formatTime
+    formatTime,
   } from '$lib/weather';
 
   const DEFAULT_LOCATION: LocationResult = {
@@ -33,7 +34,7 @@
     country: 'United States',
     country_code: 'US',
     admin1: 'Wisconsin',
-    timezone: 'America/Chicago'
+    timezone: 'America/Chicago',
   };
 
   let location = $state<LocationResult>(DEFAULT_LOCATION);
@@ -55,7 +56,7 @@
     if (!weather || !current) return [];
     const start = Math.max(
       0,
-      weather.hourly.time.findIndex((time) => time >= current.time)
+      weather.hourly.time.findIndex((time) => time >= current.time),
     );
     return weather.hourly.time.slice(start, start + 12).map((time, offset) => {
       const index = start + offset;
@@ -63,7 +64,7 @@
         time,
         temperature: weather.hourly.temperature_2m[index],
         precipitation: weather.hourly.precipitation_probability[index],
-        code: weather.hourly.weather_code[index]
+        code: weather.hourly.weather_code[index],
       };
     });
   });
@@ -75,13 +76,16 @@
       code: weather.daily.weather_code[index],
       high: weather.daily.temperature_2m_max[index],
       low: weather.daily.temperature_2m_min[index],
-      precipitation: weather.daily.precipitation_probability_max[index]
+      precipitation: weather.daily.precipitation_probability_max[index],
     }));
   });
 
   let currentVisibility = $derived.by(() => {
     if (!weather || !current) return undefined;
-    const index = Math.max(0, weather.hourly.time.findIndex((time) => time >= current.time));
+    const index = Math.max(
+      0,
+      weather.hourly.time.findIndex((time) => time >= current.time),
+    );
     const visibilityValue = weather.hourly.visibility[index];
     if (visibilityValue == null) return undefined;
     return units === 'imperial' ? visibilityValue / 5280 : visibilityValue / 1000;
@@ -146,7 +150,7 @@
 
 <div class:night={!isDay} class="app-shell">
   <header class="topbar">
-    <a class="brand" href="/" aria-label="Snow weather home">
+    <a class="brand" href={resolve('/')} aria-label="Snow weather home">
       <span class="brand-mark">S</span>
       <span>
         <strong>SNOW</strong>
@@ -157,8 +161,18 @@
     <LocationSearch {location} onselect={selectLocation} />
 
     <div class="unit-switch" aria-label="Temperature units" role="group">
-      <button aria-pressed={units === 'imperial'} class:active={units === 'imperial'} onclick={() => setUnits('imperial')} type="button">°F</button>
-      <button aria-pressed={units === 'metric'} class:active={units === 'metric'} onclick={() => setUnits('metric')} type="button">°C</button>
+      <button
+        aria-pressed={units === 'imperial'}
+        class:active={units === 'imperial'}
+        onclick={() => setUnits('imperial')}
+        type="button">°F</button
+      >
+      <button
+        aria-pressed={units === 'metric'}
+        class:active={units === 'metric'}
+        onclick={() => setUnits('metric')}
+        type="button">°C</button
+      >
     </div>
   </header>
 
@@ -179,7 +193,9 @@
           </div>
         {/if}
         <div class="location-heading">
-          <p class="eyebrow">{weather.timezone_abbreviation} · Updated {formatTime(current.time)}</p>
+          <p class="eyebrow">
+            {weather.timezone_abbreviation} · Updated {formatTime(current.time)}
+          </p>
           <h1>{location.name}</h1>
           <p>{[location.admin1, location.country].filter(Boolean).join(', ')}</p>
         </div>
@@ -235,7 +251,7 @@
         </div>
 
         <div class="hourly-strip">
-          {#each hourlyItems as hour, index}
+          {#each hourlyItems as hour, index (hour.time)}
             <article class:now={index === 0}>
               <span>{index === 0 ? 'Now' : formatHour(hour.time)}</span>
               <WeatherGlyph code={hour.code} size={24} strokeWidth={1.35} />
@@ -256,7 +272,7 @@
           </div>
 
           <div class="week-list">
-            {#each dailyItems as day, index}
+            {#each dailyItems as day, index (day.date)}
               <div class="day-row">
                 <strong>{index === 0 ? 'Today' : formatDay(day.date)}</strong>
                 <span class="day-condition">
@@ -280,7 +296,9 @@
             <p>Air quality</p>
             <strong>{currentAqi === undefined ? '—' : Math.round(currentAqi)}</strong>
             <span>{aqiLabel(currentAqi)} · US AQI</span>
-            <div class="aqi-track"><i style:width={`${Math.min(100, (currentAqi ?? 0) / 3)}%`}></i></div>
+            <div class="aqi-track">
+              <i style:width={`${Math.min(100, (currentAqi ?? 0) / 3)}%`}></i>
+            </div>
           </article>
 
           <article class="metric-card panel">
